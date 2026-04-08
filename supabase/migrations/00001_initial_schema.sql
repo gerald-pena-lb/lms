@@ -47,7 +47,7 @@ CREATE TRIGGER schools_updated_at
 -- PROFILES (extends auth.users)
 -- ============================================================
 CREATE TABLE profiles (
-  id UUID PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
+  id UUID PRIMARY KEY,
   full_name TEXT NOT NULL,
   email TEXT NOT NULL,
   role user_role NOT NULL DEFAULT 'student',
@@ -67,8 +67,17 @@ CREATE TRIGGER profiles_updated_at
   BEFORE UPDATE ON profiles
   FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
+-- ============================================================
 -- Auto-create profile on signup
-CREATE OR REPLACE FUNCTION handle_new_user()
+-- NOTE: After running this migration, go to Supabase Dashboard:
+--   Database → Functions → handle_new_user (already created below)
+--   Database → Triggers → Create trigger:
+--     Name: on_auth_user_created
+--     Table: auth.users
+--     Events: INSERT (AFTER)
+--     Function: handle_new_user
+-- ============================================================
+CREATE OR REPLACE FUNCTION public.handle_new_user()
 RETURNS TRIGGER AS $$
 BEGIN
   INSERT INTO public.profiles (id, full_name, email, role)
@@ -81,10 +90,6 @@ BEGIN
   RETURN NEW;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
-
-CREATE TRIGGER on_auth_user_created
-  AFTER INSERT ON auth.users
-  FOR EACH ROW EXECUTE FUNCTION handle_new_user();
 
 -- ============================================================
 -- COURSES
