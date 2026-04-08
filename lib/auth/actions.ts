@@ -2,6 +2,7 @@
 
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin";
 import {
   loginSchema,
   forgotPasswordSchema,
@@ -80,7 +81,8 @@ export async function completeOnboarding(data: OnboardingInput) {
     return { error: "Not authenticated" };
   }
 
-  const { error: profileError } = await supabase
+  const adminClient = createAdminClient();
+  const { error: profileError } = await adminClient
     .from("profiles")
     .upsert({
       id: user.id,
