@@ -47,6 +47,13 @@ export async function middleware(request: NextRequest) {
     return supabaseResponse;
   }
 
+  // User has role but hasn't completed onboarding
+  if (!user.user_metadata?.onboarded_at && !pathname.startsWith("/onboarding")) {
+    const url = request.nextUrl.clone();
+    url.pathname = "/onboarding";
+    return NextResponse.redirect(url);
+  }
+
   // Role-based access control
   for (const [routeRole, prefix] of Object.entries(roleRoutes)) {
     if (pathname.startsWith(prefix) && role !== routeRole && role !== "admin") {
@@ -61,6 +68,6 @@ export async function middleware(request: NextRequest) {
 
 export const config = {
   matcher: [
-    "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$|api/webhooks).*)",
+    "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$|api/webhooks|auth/callback).*)",
   ],
 };

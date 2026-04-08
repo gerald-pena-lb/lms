@@ -1,15 +1,44 @@
 "use client";
 
-import { useState } from "react";
+import { useTransition } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { toast } from "sonner";
 import Link from "next/link";
+import { login } from "@/lib/auth/actions";
+import { loginSchema, type LoginInput } from "@/lib/validators/auth";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
 export default function LoginPage() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [isPending, startTransition] = useTransition();
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<LoginInput>({
+    resolver: zodResolver(loginSchema),
+    defaultValues: { email: "", password: "" },
+  });
+
+  function onSubmit(data: LoginInput) {
+    startTransition(async () => {
+      const result = await login(data);
+      if (result?.error) {
+        toast.error(result.error);
+      }
+    });
+  }
 
   return (
     <Card>
@@ -17,46 +46,47 @@ export default function LoginPage() {
         <CardTitle className="text-2xl">Welcome to LMS</CardTitle>
         <CardDescription>Sign in to your account to continue</CardDescription>
       </CardHeader>
-      <CardContent className="space-y-4">
-        <div className="flex gap-2 justify-center">
-          <Button variant="outline" size="sm" disabled>Student</Button>
-          <Button variant="outline" size="sm" disabled>Teacher</Button>
-          <Button variant="outline" size="sm" disabled>Supervisor</Button>
-          <Button variant="outline" size="sm" disabled>Admin</Button>
-        </div>
-        <p className="text-xs text-center text-muted-foreground">
-          Your role is determined by your account — select is for visual reference only.
-        </p>
-        <div className="space-y-2">
-          <Label htmlFor="email">Email</Label>
-          <Input
-            id="email"
-            type="email"
-            placeholder="you@example.com"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-          />
-        </div>
-        <div className="space-y-2">
-          <Label htmlFor="password">Password</Label>
-          <Input
-            id="password"
-            type="password"
-            placeholder="Enter your password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
-        </div>
-      </CardContent>
-      <CardFooter className="flex flex-col gap-3">
-        <Button className="w-full">Sign In</Button>
-        <Link
-          href="/forgot-password"
-          className="text-sm text-muted-foreground hover:underline"
-        >
-          Forgot your password?
-        </Link>
-      </CardFooter>
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <CardContent className="space-y-4">
+          <div className="space-y-2">
+            <Label htmlFor="email">Email</Label>
+            <Input
+              id="email"
+              type="email"
+              placeholder="you@example.com"
+              {...register("email")}
+            />
+            {errors.email && (
+              <p className="text-sm text-destructive">{errors.email.message}</p>
+            )}
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="password">Password</Label>
+            <Input
+              id="password"
+              type="password"
+              placeholder="Enter your password"
+              {...register("password")}
+            />
+            {errors.password && (
+              <p className="text-sm text-destructive">
+                {errors.password.message}
+              </p>
+            )}
+          </div>
+        </CardContent>
+        <CardFooter className="flex flex-col gap-3">
+          <Button type="submit" className="w-full" disabled={isPending}>
+            {isPending ? "Signing in..." : "Sign In"}
+          </Button>
+          <Link
+            href="/forgot-password"
+            className="text-sm text-muted-foreground hover:underline"
+          >
+            Forgot your password?
+          </Link>
+        </CardFooter>
+      </form>
     </Card>
   );
 }
