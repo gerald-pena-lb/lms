@@ -10,6 +10,7 @@ import {
   type ForgotPasswordInput,
   type OnboardingInput,
 } from "@/lib/validators/auth";
+import type { UserRole } from "@/types/database";
 
 const roleRoutes: Record<string, string> = {
   student: "/student",
@@ -81,11 +82,13 @@ export async function completeOnboarding(data: OnboardingInput) {
 
   const { error: profileError } = await supabase
     .from("profiles")
-    .update({
+    .upsert({
+      id: user.id,
       full_name: parsed.data.full_name,
+      email: user.email!,
+      role: ((user.user_metadata?.role as string) || "student") as UserRole,
       onboarded_at: new Date().toISOString(),
-    })
-    .eq("id", user.id);
+    }, { onConflict: "id" });
 
   if (profileError) {
     return { error: "Failed to update profile" };

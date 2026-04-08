@@ -733,6 +733,12 @@ CREATE POLICY student_read_own_certificates ON certificates FOR SELECT
   USING (public.user_role() = 'student' AND student_id = auth.uid());
 
 -- ============================================================
+-- RLS POLICIES: Any authenticated user can insert their own profile (for onboarding)
+-- ============================================================
+CREATE POLICY user_insert_own_profile ON profiles FOR INSERT
+  WITH CHECK (id = auth.uid());
+
+-- ============================================================
 -- RLS POLICIES: Notifications (own only)
 -- ============================================================
 CREATE POLICY notifications_read_own ON notifications FOR SELECT
