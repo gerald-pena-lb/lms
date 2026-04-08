@@ -96,16 +96,25 @@ export async function completeOnboarding(data: OnboardingInput) {
     return { error: "Failed to update profile" };
   }
 
-  // Update user_metadata so middleware can check onboarded_at without a DB query
+  // Read role from the profile we just upserted (source of truth)
+  const { data: profile } = await adminClient
+    .from("profiles")
+    .select("role")
+    .eq("id", user.id)
+    .single();
+
+  const profileRole = profile?.role ?? "student";
+
+  // Update user_metadata so middleware can check role and onboarded_at without a DB query
   await supabase.auth.updateUser({
     data: {
       full_name: parsed.data.full_name,
+      role: profileRole,
       onboarded_at: new Date().toISOString(),
     },
   });
 
-  const role = user.user_metadata?.role as string | undefined;
-  const destination = role && roleRoutes[role] ? roleRoutes[role] : "/student";
+  const destination = roleRoutes[profileRole] ?? "/student";
 
   redirect(destination);
 }
