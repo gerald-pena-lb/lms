@@ -388,7 +388,7 @@ ALTER TABLE teaching_sessions ENABLE ROW LEVEL SECURITY;
 ALTER TABLE notifications ENABLE ROW LEVEL SECURITY;
 
 -- Helper: get current user's role
-CREATE OR REPLACE FUNCTION auth.user_role()
+CREATE OR REPLACE FUNCTION public.user_role()
 RETURNS user_role AS $$
   SELECT role FROM public.profiles WHERE id = auth.uid();
 $$ LANGUAGE sql SECURITY DEFINER STABLE;
@@ -397,143 +397,143 @@ $$ LANGUAGE sql SECURITY DEFINER STABLE;
 -- RLS POLICIES: Admin (full access)
 -- ============================================================
 CREATE POLICY admin_all_schools ON schools FOR ALL
-  USING (auth.user_role() = 'admin');
+  USING (public.user_role() = 'admin');
 
 CREATE POLICY admin_all_profiles ON profiles FOR ALL
-  USING (auth.user_role() = 'admin');
+  USING (public.user_role() = 'admin');
 
 CREATE POLICY admin_all_courses ON courses FOR ALL
-  USING (auth.user_role() = 'admin');
+  USING (public.user_role() = 'admin');
 
 CREATE POLICY admin_all_modules ON modules FOR ALL
-  USING (auth.user_role() = 'admin');
+  USING (public.user_role() = 'admin');
 
 CREATE POLICY admin_all_lessons ON lessons FOR ALL
-  USING (auth.user_role() = 'admin');
+  USING (public.user_role() = 'admin');
 
 CREATE POLICY admin_all_activities ON activities FOR ALL
-  USING (auth.user_role() = 'admin');
+  USING (public.user_role() = 'admin');
 
 CREATE POLICY admin_all_classes ON classes FOR ALL
-  USING (auth.user_role() = 'admin');
+  USING (public.user_role() = 'admin');
 
 CREATE POLICY admin_all_class_teachers ON class_teachers FOR ALL
-  USING (auth.user_role() = 'admin');
+  USING (public.user_role() = 'admin');
 
 CREATE POLICY admin_all_class_students ON class_students FOR ALL
-  USING (auth.user_role() = 'admin');
+  USING (public.user_role() = 'admin');
 
 CREATE POLICY admin_all_lesson_assignments ON lesson_assignments FOR ALL
-  USING (auth.user_role() = 'admin');
+  USING (public.user_role() = 'admin');
 
 CREATE POLICY admin_all_attendance ON attendance FOR ALL
-  USING (auth.user_role() = 'admin');
+  USING (public.user_role() = 'admin');
 
 CREATE POLICY admin_all_submissions ON submissions FOR ALL
-  USING (auth.user_role() = 'admin');
+  USING (public.user_role() = 'admin');
 
 CREATE POLICY admin_all_student_progress ON student_progress FOR ALL
-  USING (auth.user_role() = 'admin');
+  USING (public.user_role() = 'admin');
 
 CREATE POLICY admin_all_badges ON badges FOR ALL
-  USING (auth.user_role() = 'admin');
+  USING (public.user_role() = 'admin');
 
 CREATE POLICY admin_all_student_badges ON student_badges FOR ALL
-  USING (auth.user_role() = 'admin');
+  USING (public.user_role() = 'admin');
 
 CREATE POLICY admin_all_certificates ON certificates FOR ALL
-  USING (auth.user_role() = 'admin');
+  USING (public.user_role() = 'admin');
 
 CREATE POLICY admin_all_teaching_sessions ON teaching_sessions FOR ALL
-  USING (auth.user_role() = 'admin');
+  USING (public.user_role() = 'admin');
 
 CREATE POLICY admin_all_notifications ON notifications FOR ALL
-  USING (auth.user_role() = 'admin');
+  USING (public.user_role() = 'admin');
 
 -- ============================================================
 -- RLS POLICIES: Supervisor (CRUD courses/modules/lessons/activities, read all)
 -- ============================================================
 CREATE POLICY supervisor_read_schools ON schools FOR SELECT
-  USING (auth.user_role() = 'supervisor');
+  USING (public.user_role() = 'supervisor');
 
 CREATE POLICY supervisor_read_profiles ON profiles FOR SELECT
-  USING (auth.user_role() = 'supervisor');
+  USING (public.user_role() = 'supervisor');
 
 CREATE POLICY supervisor_all_courses ON courses FOR ALL
-  USING (auth.user_role() = 'supervisor');
+  USING (public.user_role() = 'supervisor');
 
 CREATE POLICY supervisor_all_modules ON modules FOR ALL
-  USING (auth.user_role() = 'supervisor');
+  USING (public.user_role() = 'supervisor');
 
 CREATE POLICY supervisor_all_lessons ON lessons FOR ALL
-  USING (auth.user_role() = 'supervisor');
+  USING (public.user_role() = 'supervisor');
 
 CREATE POLICY supervisor_all_activities ON activities FOR ALL
-  USING (auth.user_role() = 'supervisor');
+  USING (public.user_role() = 'supervisor');
 
 CREATE POLICY supervisor_read_classes ON classes FOR SELECT
-  USING (auth.user_role() = 'supervisor');
+  USING (public.user_role() = 'supervisor');
 
 CREATE POLICY supervisor_read_class_teachers ON class_teachers FOR SELECT
-  USING (auth.user_role() = 'supervisor');
+  USING (public.user_role() = 'supervisor');
 
 CREATE POLICY supervisor_read_class_students ON class_students FOR SELECT
-  USING (auth.user_role() = 'supervisor');
+  USING (public.user_role() = 'supervisor');
 
 CREATE POLICY supervisor_all_lesson_assignments ON lesson_assignments FOR ALL
-  USING (auth.user_role() = 'supervisor');
+  USING (public.user_role() = 'supervisor');
 
 CREATE POLICY supervisor_read_attendance ON attendance FOR SELECT
-  USING (auth.user_role() = 'supervisor');
+  USING (public.user_role() = 'supervisor');
 
 CREATE POLICY supervisor_read_submissions ON submissions FOR SELECT
-  USING (auth.user_role() = 'supervisor');
+  USING (public.user_role() = 'supervisor');
 
 CREATE POLICY supervisor_read_student_progress ON student_progress FOR SELECT
-  USING (auth.user_role() = 'supervisor');
+  USING (public.user_role() = 'supervisor');
 
 CREATE POLICY supervisor_all_badges ON badges FOR ALL
-  USING (auth.user_role() = 'supervisor');
+  USING (public.user_role() = 'supervisor');
 
 CREATE POLICY supervisor_read_student_badges ON student_badges FOR SELECT
-  USING (auth.user_role() = 'supervisor');
+  USING (public.user_role() = 'supervisor');
 
 CREATE POLICY supervisor_read_certificates ON certificates FOR SELECT
-  USING (auth.user_role() = 'supervisor');
+  USING (public.user_role() = 'supervisor');
 
 CREATE POLICY supervisor_read_teaching_sessions ON teaching_sessions FOR SELECT
-  USING (auth.user_role() = 'supervisor');
+  USING (public.user_role() = 'supervisor');
 
 -- ============================================================
 -- RLS POLICIES: Teacher (read assigned classes, manage attendance/submissions)
 -- ============================================================
 CREATE POLICY teacher_read_own_profile ON profiles FOR SELECT
-  USING (auth.user_role() = 'teacher' AND id = auth.uid());
+  USING (public.user_role() = 'teacher' AND id = auth.uid());
 
 CREATE POLICY teacher_update_own_profile ON profiles FOR UPDATE
-  USING (auth.user_role() = 'teacher' AND id = auth.uid());
+  USING (public.user_role() = 'teacher' AND id = auth.uid());
 
 CREATE POLICY teacher_read_schools ON schools FOR SELECT
-  USING (auth.user_role() = 'teacher');
+  USING (public.user_role() = 'teacher');
 
 CREATE POLICY teacher_read_assigned_classes ON classes FOR SELECT
   USING (
-    auth.user_role() = 'teacher'
+    public.user_role() = 'teacher'
     AND id IN (SELECT class_id FROM class_teachers WHERE teacher_id = auth.uid())
   );
 
 CREATE POLICY teacher_read_own_class_teachers ON class_teachers FOR SELECT
-  USING (auth.user_role() = 'teacher' AND teacher_id = auth.uid());
+  USING (public.user_role() = 'teacher' AND teacher_id = auth.uid());
 
 CREATE POLICY teacher_read_class_students ON class_students FOR SELECT
   USING (
-    auth.user_role() = 'teacher'
+    public.user_role() = 'teacher'
     AND class_id IN (SELECT class_id FROM class_teachers WHERE teacher_id = auth.uid())
   );
 
 CREATE POLICY teacher_read_student_profiles ON profiles FOR SELECT
   USING (
-    auth.user_role() = 'teacher'
+    public.user_role() = 'teacher'
     AND id IN (
       SELECT student_id FROM class_students
       WHERE class_id IN (SELECT class_id FROM class_teachers WHERE teacher_id = auth.uid())
@@ -542,7 +542,7 @@ CREATE POLICY teacher_read_student_profiles ON profiles FOR SELECT
 
 CREATE POLICY teacher_read_courses ON courses FOR SELECT
   USING (
-    auth.user_role() = 'teacher'
+    public.user_role() = 'teacher'
     AND id IN (
       SELECT course_id FROM classes
       WHERE id IN (SELECT class_id FROM class_teachers WHERE teacher_id = auth.uid())
@@ -551,7 +551,7 @@ CREATE POLICY teacher_read_courses ON courses FOR SELECT
 
 CREATE POLICY teacher_read_modules ON modules FOR SELECT
   USING (
-    auth.user_role() = 'teacher'
+    public.user_role() = 'teacher'
     AND course_id IN (
       SELECT course_id FROM classes
       WHERE id IN (SELECT class_id FROM class_teachers WHERE teacher_id = auth.uid())
@@ -560,7 +560,7 @@ CREATE POLICY teacher_read_modules ON modules FOR SELECT
 
 CREATE POLICY teacher_read_lessons ON lessons FOR SELECT
   USING (
-    auth.user_role() = 'teacher'
+    public.user_role() = 'teacher'
     AND module_id IN (
       SELECT id FROM modules WHERE course_id IN (
         SELECT course_id FROM classes
@@ -571,7 +571,7 @@ CREATE POLICY teacher_read_lessons ON lessons FOR SELECT
 
 CREATE POLICY teacher_read_activities ON activities FOR SELECT
   USING (
-    auth.user_role() = 'teacher'
+    public.user_role() = 'teacher'
     AND lesson_id IN (
       SELECT id FROM lessons WHERE module_id IN (
         SELECT id FROM modules WHERE course_id IN (
@@ -584,70 +584,70 @@ CREATE POLICY teacher_read_activities ON activities FOR SELECT
 
 CREATE POLICY teacher_read_lesson_assignments ON lesson_assignments FOR SELECT
   USING (
-    auth.user_role() = 'teacher'
+    public.user_role() = 'teacher'
     AND class_id IN (SELECT class_id FROM class_teachers WHERE teacher_id = auth.uid())
   );
 
 CREATE POLICY teacher_manage_attendance ON attendance FOR ALL
   USING (
-    auth.user_role() = 'teacher'
+    public.user_role() = 'teacher'
     AND class_id IN (SELECT class_id FROM class_teachers WHERE teacher_id = auth.uid())
   );
 
 CREATE POLICY teacher_read_submissions ON submissions FOR SELECT
   USING (
-    auth.user_role() = 'teacher'
+    public.user_role() = 'teacher'
     AND class_id IN (SELECT class_id FROM class_teachers WHERE teacher_id = auth.uid())
   );
 
 CREATE POLICY teacher_grade_submissions ON submissions FOR UPDATE
   USING (
-    auth.user_role() = 'teacher'
+    public.user_role() = 'teacher'
     AND class_id IN (SELECT class_id FROM class_teachers WHERE teacher_id = auth.uid())
   );
 
 CREATE POLICY teacher_read_student_progress ON student_progress FOR SELECT
   USING (
-    auth.user_role() = 'teacher'
+    public.user_role() = 'teacher'
     AND class_id IN (SELECT class_id FROM class_teachers WHERE teacher_id = auth.uid())
   );
 
 CREATE POLICY teacher_manage_teaching_sessions ON teaching_sessions FOR ALL
-  USING (auth.user_role() = 'teacher' AND teacher_id = auth.uid());
+  USING (public.user_role() = 'teacher' AND teacher_id = auth.uid());
 
 CREATE POLICY teacher_read_badges ON badges FOR SELECT
-  USING (auth.user_role() = 'teacher');
+  USING (public.user_role() = 'teacher');
 
 -- ============================================================
 -- RLS POLICIES: Student (read own data, submit work)
 -- ============================================================
 CREATE POLICY student_read_own_profile ON profiles FOR SELECT
-  USING (auth.user_role() = 'student' AND id = auth.uid());
+  USING (public.user_role() = 'student' AND id = auth.uid());
 
 CREATE POLICY student_update_own_profile ON profiles FOR UPDATE
-  USING (auth.user_role() = 'student' AND id = auth.uid());
+  USING (public.user_role() = 'student' AND id = auth.uid());
 
 CREATE POLICY student_read_schools ON schools FOR SELECT
-  USING (auth.user_role() = 'student');
+  USING (public.user_role() = 'student');
 
 CREATE POLICY student_read_enrolled_classes ON classes FOR SELECT
   USING (
-    auth.user_role() = 'student'
+    public.user_role() = 'student'
     AND id IN (SELECT class_id FROM class_students WHERE student_id = auth.uid())
   );
 
 CREATE POLICY student_read_own_enrollments ON class_students FOR SELECT
-  USING (auth.user_role() = 'student' AND student_id = auth.uid());
+  USING (public.user_role() = 'student' AND student_id = auth.uid());
 
 CREATE POLICY student_read_class_teachers ON class_teachers FOR SELECT
   USING (
-    auth.user_role() = 'student'
+    public.user_role() = 'student'
     AND class_id IN (SELECT class_id FROM class_students WHERE student_id = auth.uid())
   );
 
 CREATE POLICY student_read_courses ON courses FOR SELECT
   USING (
-    auth.user_role() = 'student'
+    public.user_role() = 'student'
     AND status = 'published'
     AND id IN (
       SELECT course_id FROM classes
@@ -657,7 +657,7 @@ CREATE POLICY student_read_courses ON courses FOR SELECT
 
 CREATE POLICY student_read_modules ON modules FOR SELECT
   USING (
-    auth.user_role() = 'student'
+    public.user_role() = 'student'
     AND status = 'published'
     AND course_id IN (
       SELECT course_id FROM classes
@@ -667,7 +667,7 @@ CREATE POLICY student_read_modules ON modules FOR SELECT
 
 CREATE POLICY student_read_lessons ON lessons FOR SELECT
   USING (
-    auth.user_role() = 'student'
+    public.user_role() = 'student'
     AND status = 'published'
     AND module_id IN (
       SELECT id FROM modules WHERE status = 'published' AND course_id IN (
@@ -679,7 +679,7 @@ CREATE POLICY student_read_lessons ON lessons FOR SELECT
 
 CREATE POLICY student_read_activities ON activities FOR SELECT
   USING (
-    auth.user_role() = 'student'
+    public.user_role() = 'student'
     AND lesson_id IN (
       SELECT id FROM lessons WHERE status = 'published' AND module_id IN (
         SELECT id FROM modules WHERE status = 'published' AND course_id IN (
@@ -692,40 +692,40 @@ CREATE POLICY student_read_activities ON activities FOR SELECT
 
 CREATE POLICY student_read_lesson_assignments ON lesson_assignments FOR SELECT
   USING (
-    auth.user_role() = 'student'
+    public.user_role() = 'student'
     AND class_id IN (SELECT class_id FROM class_students WHERE student_id = auth.uid())
   );
 
 CREATE POLICY student_read_own_attendance ON attendance FOR SELECT
-  USING (auth.user_role() = 'student' AND student_id = auth.uid());
+  USING (public.user_role() = 'student' AND student_id = auth.uid());
 
 CREATE POLICY student_read_own_submissions ON submissions FOR SELECT
-  USING (auth.user_role() = 'student' AND student_id = auth.uid());
+  USING (public.user_role() = 'student' AND student_id = auth.uid());
 
 CREATE POLICY student_insert_submissions ON submissions FOR INSERT
   WITH CHECK (
-    auth.user_role() = 'student'
+    public.user_role() = 'student'
     AND student_id = auth.uid()
     AND class_id IN (SELECT class_id FROM class_students WHERE student_id = auth.uid())
   );
 
 CREATE POLICY student_read_own_progress ON student_progress FOR SELECT
-  USING (auth.user_role() = 'student' AND student_id = auth.uid());
+  USING (public.user_role() = 'student' AND student_id = auth.uid());
 
 CREATE POLICY student_update_own_progress ON student_progress FOR UPDATE
-  USING (auth.user_role() = 'student' AND student_id = auth.uid());
+  USING (public.user_role() = 'student' AND student_id = auth.uid());
 
 CREATE POLICY student_insert_own_progress ON student_progress FOR INSERT
-  WITH CHECK (auth.user_role() = 'student' AND student_id = auth.uid());
+  WITH CHECK (public.user_role() = 'student' AND student_id = auth.uid());
 
 CREATE POLICY student_read_badges ON badges FOR SELECT
-  USING (auth.user_role() = 'student');
+  USING (public.user_role() = 'student');
 
 CREATE POLICY student_read_own_badges ON student_badges FOR SELECT
-  USING (auth.user_role() = 'student' AND student_id = auth.uid());
+  USING (public.user_role() = 'student' AND student_id = auth.uid());
 
 CREATE POLICY student_read_own_certificates ON certificates FOR SELECT
-  USING (auth.user_role() = 'student' AND student_id = auth.uid());
+  USING (public.user_role() = 'student' AND student_id = auth.uid());
 
 -- ============================================================
 -- RLS POLICIES: Notifications (own only)
