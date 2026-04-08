@@ -136,6 +136,7 @@ export interface Database {
           level?: string | null;
           cover_image_url?: string | null;
           status?: ContentStatus;
+          school_id?: string | null;
           updated_at?: string;
         };
         Relationships: [
