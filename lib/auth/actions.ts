@@ -82,13 +82,24 @@ export async function completeOnboarding(data: OnboardingInput) {
   }
 
   const adminClient = createAdminClient();
+
+  // Check if profile already exists (e.g. role was set via SQL)
+  const { data: existingProfile } = await adminClient
+    .from("profiles")
+    .select("role")
+    .eq("id", user.id)
+    .maybeSingle();
+
+  const role = existingProfile?.role
+    ?? ((user.user_metadata?.role as string) || "student");
+
   const { error: profileError } = await adminClient
     .from("profiles")
     .upsert({
       id: user.id,
       full_name: parsed.data.full_name,
       email: user.email!,
-      role: ((user.user_metadata?.role as string) || "student") as UserRole,
+      role: role as UserRole,
       onboarded_at: new Date().toISOString(),
     }, { onConflict: "id" });
 
